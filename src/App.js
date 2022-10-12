@@ -2,14 +2,15 @@ import { useEffect } from "react";
 import { useRef, useState } from "react";
 
 function App() {
-	const ffff = useRef(null);
-
-	const inputClick = () => {
-		console.log(ffff.current.value);
-	};
+	// 참조
+	const dataRef = useRef(null);
 
 	// useState Read, Add, Modify, Delete
 	const [list, setList] = useState(["텍스트1", "텍스트2", "텍스트3"]);
+
+	const inputClick = () => {
+		setList([...list, dataRef.current.value]);
+	};
 
 	const onClick = () => {
 		// 불변성을 유지해야 한다는 규칙이 있음.
@@ -60,7 +61,7 @@ function App() {
 
 	return (
 		<div>
-			<input type="text" ref={ffff} />
+			<input type="text" ref={dataRef} />
 			<button onClick={inputClick}>input Clicked</button>
 			<h1>제목</h1>
 			{list.map((value, idx) => {
