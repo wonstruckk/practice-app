@@ -1,84 +1,75 @@
-import { useEffect } from "react";
 import { useRef, useState } from "react";
 
+function Button({ onClick, children }) {
+	return (
+		<button
+			style={{
+				width: "100px",
+				height: "100px",
+				borderRadius: "10px",
+				border: 0,
+			}}
+			onClick={onClick}
+		>
+			{children}
+		</button>
+	);
+}
+
+function Container({ text, onDelete, idx }) {
+	// 컴포넌트 명에서는 Pascal Case를 사용한다
+	return (
+		<div>
+			{text}
+			<button onClick={() => onDelete(idx)}>삭제</button>
+		</div>
+	);
+}
+
 function App() {
-	// 참조
-	const dataRef = useRef(null);
-
-	// useState Read, Add, Modify, Delete
-	const [list, setList] = useState(["텍스트1", "텍스트2", "텍스트3"]);
-
-	const inputClick = () => {
-		setList([...list, dataRef.current.value]);
-	};
+	const ref = useRef();
+	const [data, setData] = useState(["Hello", "Name"]);
 
 	const onClick = () => {
-		// 불변성을 유지해야 한다는 규칙이 있음.
-		setList([...list, "텍스트4"]);
+		setData([ref.current.value, ...data]);
+		ref.current.value = "";
 	};
 
-	const onModify = (value) => {
-		setList(
-			list.map((text) => {
-				if (value === text) {
-					return "텍스트 수정";
-				} else {
-					return text;
-				}
-			})
-		);
-	};
+	const onDelete = (idx) => {
+		// console.log(idx);
 
-	const onDelete = (value) => {
-		// filter
-		setList(
-			list.filter((text) => {
-				if (value === text) {
+		// 0번째인지 첫번째인지 알수 있다
+		setData((currentValue) => {
+			const newValue = currentValue.filter((value, currentIndex) => {
+				if (currentIndex === idx) {
 					return false;
 				} else {
 					return true;
 				}
-			})
-		);
-	};
-
-	const onModifyIdx = (idx) => {
-		// 0, 1, 2
-		setList((currentValue) => {
-			const newList = [...currentValue]; // 새 배열을 만듬 (불변성을 유지해야 하기 때문에)
-			newList[idx] = "다른 텍스트";
-			return newList;
-		});
-	};
-
-	const onDeleteIdx = (idx) => {
-		setList((currentValue) => {
-			const newList = [...currentValue];
-			newList.splice(idx, 1);
-			return newList;
+			});
+			return newValue;
 		});
 	};
 
 	return (
 		<div>
-			<input type="text" ref={dataRef} />
-			<button onClick={inputClick}>input Clicked</button>
-			<h1>제목</h1>
-			{list.map((value, idx) => {
-				// 텍스트1, 텍스트2, 텍스트3
-				// map은 데이터를 반복해서 수정할 때 사용
+			<input type="text" ref={ref} />
+			<Button onClick={onClick}>dafewaw</Button>
+			{data.map((value, idx) => {
+				return (
+					<Container onDelete={onDelete} text={value} idx={idx} key={idx} />
+				);
+			})}
+			{/* {data.map((value, idx) => {
 				return (
 					<div key={idx}>
-						<div>{value}</div>
-						<button onClick={() => onModify(value)}>수정하기</button>
-						<button onClick={() => onDelete(value)}>삭제하기</button>
-
-						<button onClick={() => onModifyIdx(idx)}>수정하기idx</button>
-						<button onClick={() => onDeleteIdx(idx)}>삭제하기idx</button>
+						{value}
+						<button>수정</button>
+						<button onClick={() => onDelete(idx)}>삭제</button>
 					</div>
-				); // [텍스트1A, 텍스트2A, 텍스트3A]
-			})}
-			<button onClick={onClick}>버튼</button>
+				);
+			})} */}
+			{/* <Container text="안녕" name="바이" /> */}
 		</div>
 	);
 }
